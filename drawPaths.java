@@ -15,7 +15,7 @@ public class drawPaths extends GraphicsProgram {
 	private static final int DOTSIZE = 4;
 	private static final int MARGIN = 20;
 	private int[] shortestPath;
-	private static final int EPOCHS = 1000;
+	private static final int EPOCHS = 10000;
 	private Map<Integer, GLine> lineGraphic = new HashMap<Integer, GLine>(); 
 	private int bruteForceDistance = 0;
 

@@ -103,6 +103,9 @@ public class ModifiedKohonen{
 
 		//Update the all neurons with respect to their distances to BMU
 		for(int i = 0; i < numNeurons; i++){
+			for(int)
+			
+			
 			weight[i][0] += (alpha * h[i][indexBMU] * (patternX - weight[i][0]));
 			weight[i][1] += (alpha * h[i][indexBMU] * (patternY - weight[i][1]));
 		}
