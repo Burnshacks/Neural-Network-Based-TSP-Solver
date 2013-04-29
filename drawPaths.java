@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
-import TSP.*;
 import acm.graphics.*;
 import acm.program.*;
 
@@ -76,7 +74,7 @@ public class drawPaths extends GraphicsProgram {
 		int tempy2;
 		int totalDistance = 0;
 		ElasticNet en = new ElasticNet();
-		en.initialize();
+		en.setup();
 		for(int j=0; j<EPOCHS; j++){
 			totalDistance=0;
 			en.algorithm();

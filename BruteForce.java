@@ -4,10 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import TSP.*;
-
-
-
 public class BruteForce {
 	int[] shortestPath;
 	int numNodes;

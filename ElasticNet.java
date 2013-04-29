@@ -5,15 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import TSP.*;
-
-public class ElasticNet
-{
+public class ElasticNet{
+	
 	private int numNodes = 0;
 	private int numNeurons = numNodes * 2;
 	private final double NEAR = 0.05;
 	private final double MOMENTUM = 0.995;
-	private double city[][] = null;
+	private double node[][] = null;
 	private double neuronXY[][] = null;
 	private double weight[][] = null;
 	private double h[][];
@@ -22,18 +20,14 @@ public class ElasticNet
 	private double alpha = 0.5;
 	private ArrayList<Node> nodes = new ArrayList<Node>();
 
-
-
-
-	public void initialize() throws FileNotFoundException, IOException
-	{		
+	public void setup() throws FileNotFoundException, IOException{		
 		FileReader fr = new FileReader();
 		fr.readNodes();
 		nodes = fr.getNodes();
 		numNodes = fr.getNumberOfNodes();
 		numNeurons = numNodes * 2;
 
-		city = new double[numNodes][2];              
+		node = new double[numNodes][2];              
 		neuronXY = new double[numNeurons][2];         
 		weight = new double[numNeurons][2];           
 		h = new double[numNeurons][numNeurons];
@@ -41,8 +35,8 @@ public class ElasticNet
 
 		for(int i=0; i<numNodes; i++){
 			Node n = nodes.get(i);
-			city[i][0] = n.getX();
-			city[i][1] = n.getY();
+			node[i][0] = n.getX();
+			node[i][1] = n.getY();
 		}
 
 		for(int i = 0; i < numNeurons; i++)
@@ -54,12 +48,12 @@ public class ElasticNet
 			weight[i][1] = 1000*Math.random();
 		}
 
-		computeMatrix(sigma);
+		calculateH(sigma);
 
 		return;
 	}
 
-	private void computeMatrix(double theta)
+	private void calculateH(double theta)
 	{
 		for(int i = 0; i < numNeurons; i++)
 		{
@@ -103,8 +97,8 @@ public class ElasticNet
 		double loc2 = 0.0;
 
 		index = (int)(Math.random() * numNodes);
-		loc1 = city[index][0] + (Math.random() * NEAR) - NEAR / 2;
-		loc2 = city[index][1] + (Math.random() * NEAR) - NEAR / 2;
+		loc1 = node[index][0] + (Math.random() * NEAR) - NEAR / 2;
+		loc2 = node[index][1] + (Math.random() * NEAR) - NEAR / 2;
 
 		minimumIndex = findMinimum(loc1, loc2);
 
@@ -118,7 +112,7 @@ public class ElasticNet
 		alpha *= MOMENTUM;
 		sigma *= MOMENTUM;
 
-		computeMatrix(sigma);
+		calculateH(sigma);
 
 
 	}
@@ -137,7 +131,7 @@ public class ElasticNet
 
 
 	public void findKohonenSolution() throws FileNotFoundException, IOException{
-		initialize();
+		setup();
 		algorithm();
 	}
 
