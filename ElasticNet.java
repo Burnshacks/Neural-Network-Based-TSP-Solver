@@ -9,8 +9,7 @@ public class ElasticNet{
 	
 	private int numNodes = 0;
 	private int numNeurons = numNodes * 2;
-	private final double NEAR = 0.05;
-	private final double MOMENTUM = 0.995;
+	private static final double DECAY = 0.995;
 	private double node[][] = null;
 	private double neuronXY[][] = null;
 	private double weight[][] = null;
@@ -53,6 +52,7 @@ public class ElasticNet{
 		return;
 	}
 
+	// Calculates the distance between BMU and the neighboring neuron
 	private void calculateH(double theta)
 	{
 		for(int i = 0; i < numNeurons; i++)
@@ -60,7 +60,7 @@ public class ElasticNet{
 			h[i][i] = 1.0;
 			for(int j = i + 1; j < numNeurons; j++)
 			{
-				h[i][j] = Math.exp(-1.0 * (getDistance(i, j) * getDistance(i, j)) / (2.0 * Math.pow(theta, 2)));
+				h[i][j] = Math.exp(-1.0 * (getDistance(i, j) * getDistance(i, j)) / (Math.pow(theta, 2)));
 				h[j][i] = h[i][j];
 			}
 		}
@@ -74,7 +74,7 @@ public class ElasticNet{
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 
-	private int findMinimum(double location1, double location2)
+	private int findBMU(double location1, double location2)
 	{
 		double minimumDistance = 10000000.0;
 		int minimumIndex = -1;
@@ -89,41 +89,46 @@ public class ElasticNet{
 		return minimumIndex;
 	}
 
-	public void algorithm()
-	{
+	public void algorithm(){
+		
 		int index = 0;
-		int minimumIndex = 0;
-		double loc1 = 0.0;
-		double loc2 = 0.0;
+		int indexBMU = 0;
+		double patternX = 0.0;
+		double patternY = 0.0;
 
+		// Pick a Random Node
 		index = (int)(Math.random() * numNodes);
-		loc1 = node[index][0] + (Math.random() * NEAR) - NEAR / 2;
-		loc2 = node[index][1] + (Math.random() * NEAR) - NEAR / 2;
+		patternX = node[index][0];
+		patternY = node[index][1];
 
-		minimumIndex = findMinimum(loc1, loc2);
+		// Find index of the BMU
+		indexBMU = findBMU(patternX, patternY);
 
-
-		for(int i = 0; i < numNeurons; i++)
-		{
-			weight[i][0] += (alpha * h[i][minimumIndex] * (loc1 - weight[i][0]));
-			weight[i][1] += (alpha * h[i][minimumIndex] * (loc2 - weight[i][1]));
+		//Update the BMU
+		for(int i = 0; i < numNeurons; i++){
+			weight[i][0] += (alpha * h[i][indexBMU] * (patternX - weight[i][0]));
+			weight[i][1] += (alpha * h[i][indexBMU] * (patternY - weight[i][1]));
 		}
 
-		alpha *= MOMENTUM;
-		sigma *= MOMENTUM;
-
+		//Updates alpha and sigma (Monoton decay)
+		updateParameters();
+		
 		calculateH(sigma);
 
 
 	}
 
 
+	private void updateParameters() {
+		alpha *= DECAY;
+		sigma *= DECAY;		
+	}
+
 	public double[][] getWeight() {
 		return weight;
 	}
 
-	public static void main(String[] args) throws FileNotFoundException, IOException
-	{
+	public static void main(String[] args) throws FileNotFoundException, IOException {
 		ElasticNet en = new ElasticNet();
 		en.findKohonenSolution();
 	}

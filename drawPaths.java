@@ -78,7 +78,7 @@ public class drawPaths extends GraphicsProgram {
 		for(int j=0; j<EPOCHS; j++){
 			totalDistance=0;
 			en.algorithm();
-			pause(50-j/20);
+//			pause(50-j/20);
 			//		en.findKohonenSolution();
 			double[][] weights = en.getWeight();
 //			System.out.println(weights.length);
