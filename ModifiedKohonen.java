@@ -17,6 +17,7 @@ public class ModifiedKohonen{
 	private double gridInterval = 0.0;
 	private double sigma = 0.5;
 	private double alpha = 0.5;
+	private double k = 0.5;
 	private ArrayList<Node> nodes = new ArrayList<Node>();
 
 	public void setup() throws FileNotFoundException, IOException{		
@@ -59,7 +60,7 @@ public class ModifiedKohonen{
 			h[i][i] = 1.0;
 			for(int j = i + 1; j < numNeurons; j++)
 			{
-				h[i][j] = Math.exp(-1.0 * (getDistance(i, j) * getDistance(i, j)) / (Math.pow(theta, 2)));
+				h[i][j] = Math.exp(-1.0 * (getDistance(i, j) * getDistance(i, j)) / (2 * Math.pow(theta, 2)));
 				h[j][i] = h[i][j];
 			}
 		}
@@ -103,11 +104,24 @@ public class ModifiedKohonen{
 
 		//Update the all neurons with respect to their distances to BMU
 		for(int i = 0; i < numNeurons; i++){
-			for(int)
+			double higherWeight;
+			double lowerWeight;
+			
+			if(i <= numNeurons -2)
+				higherWeight = weight[i+1][0];
+			else
+				higherWeight = weight[0][0];
+			
+			if(i >= 1)
+				lowerWeight = weight[i-1][0];
+			else
+				lowerWeight = weight[numNeurons-1][0];
 			
 			
-			weight[i][0] += (alpha * h[i][indexBMU] * (patternX - weight[i][0]));
-			weight[i][1] += (alpha * h[i][indexBMU] * (patternY - weight[i][1]));
+			weight[i][0] += (alpha * h[i][indexBMU] * (patternX - weight[i][0])) + 
+					k * (higherWeight - 2 * weight[i][0] + lowerWeight);
+			weight[i][1] += (alpha * h[i][indexBMU] * (patternY - weight[i][1])) +		
+					k * (higherWeight - 2 * weight[i][1] + lowerWeight);
 		}
 
 		//Updates alpha and sigma (Monoton decay)
@@ -122,6 +136,7 @@ public class ModifiedKohonen{
 	private void updateParameters() {
 		alpha *= DECAY;
 		sigma *= DECAY;		
+		k *= DECAY;
 	}
 
 	public double[][] getWeight() {
