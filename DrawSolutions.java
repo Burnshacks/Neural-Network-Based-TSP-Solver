@@ -13,12 +13,14 @@ import acm.program.*;
 
 public class DrawSolutions extends GraphicsProgram {
 	
+	// path needs to be modified
 	private static String path = "/Users/erensezener/java_workspace/Kohonen-TSP/mynodes.txt";
 	
+	private static final int EPOCHS = 2000;
 	private static final int DOTSIZE = 4;
 	private static final int MARGIN = 20;
+	
 	private int[] shortestPath;
-	private static final int EPOCHS = 10000;
 	private Map<Integer, GLine> lineGraphic = new HashMap<Integer, GLine>(); 
 	private int bruteForceDistance = 0;
 
@@ -71,14 +73,14 @@ public class DrawSolutions extends GraphicsProgram {
 		int tempx2;
 		int tempy2;
 		int totalDistance = 0;
-		ElasticNet en = new ElasticNet();
+		KohonenNetwork en = new KohonenNetwork();
 //		ModifiedKohonen en = new ModifiedKohonen();
 		
 		en.setup();
 		for(int j=0; j<EPOCHS; j++){
 			totalDistance=0;
-			en.algorithm();
-//			pause(50);
+			en.updateWeights();
+			pause(20-j/(EPOCHS/20));
 			//		en.findKohonenSolution();
 			double[][] weights = en.getWeight();
 //			System.out.println(weights.length);

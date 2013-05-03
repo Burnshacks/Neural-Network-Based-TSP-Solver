@@ -76,9 +76,7 @@ public class PermutationGenerator {
         while (pg.hasMore()) {
             int[] temp =  pg.getNext();
             for (int i = 0; i < temp.length; i++) {
-//                System.out.print(temp[i] + " ");
             }
-//            System.out.println();
         }
     }
  

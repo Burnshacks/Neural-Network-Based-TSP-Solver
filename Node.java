@@ -10,7 +10,6 @@ public class Node {
 		this.id = id;
 		this.x = x;
 		this.y = y;
-//		System.out.println(this.toString());
 	}
 
 	
