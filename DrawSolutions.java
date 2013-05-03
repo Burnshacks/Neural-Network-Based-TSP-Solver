@@ -11,7 +11,10 @@ import java.util.Map;
 import acm.graphics.*;
 import acm.program.*;
 
-public class drawPaths extends GraphicsProgram {
+public class DrawSolutions extends GraphicsProgram {
+	
+	private static String path = "/Users/erensezener/java_workspace/Kohonen-TSP/mynodes.txt";
+	
 	private static final int DOTSIZE = 4;
 	private static final int MARGIN = 20;
 	private int[] shortestPath;
@@ -19,25 +22,20 @@ public class drawPaths extends GraphicsProgram {
 	private Map<Integer, GLine> lineGraphic = new HashMap<Integer, GLine>(); 
 	private int bruteForceDistance = 0;
 
-
 	public void run(){
 		drawBruteForce();
 		try {
 			addAllNodes();
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
 			drawKohonen();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -74,11 +72,13 @@ public class drawPaths extends GraphicsProgram {
 		int tempy2;
 		int totalDistance = 0;
 		ElasticNet en = new ElasticNet();
+//		ModifiedKohonen en = new ModifiedKohonen();
+		
 		en.setup();
 		for(int j=0; j<EPOCHS; j++){
 			totalDistance=0;
 			en.algorithm();
-//			pause(50-j/20);
+//			pause(50);
 			//		en.findKohonenSolution();
 			double[][] weights = en.getWeight();
 //			System.out.println(weights.length);
@@ -103,7 +103,7 @@ public class drawPaths extends GraphicsProgram {
 		}
 		System.out.println("Brute Force Solution is "+bruteForceDistance);
 		System.out.println("SOM Solution is " +totalDistance);
-		System.out.println("Error is " + (double) 100*(totalDistance-bruteForceDistance)/bruteForceDistance );
+		System.out.println("Error % is " + (double) 100*(totalDistance-bruteForceDistance)/bruteForceDistance );
 
 	}
 
@@ -149,6 +149,10 @@ public class drawPaths extends GraphicsProgram {
 		GLine line = new GLine(n1.getX()/2+MARGIN,n1.getY()/2+MARGIN,n2.getX()/2+MARGIN,n2.getY()/2+MARGIN);
 		line.setColor(Color.BLACK);
 		add(line);
+	}
+	
+	public String getPath() {
+		return path;
 	}
 
 	public void init() {

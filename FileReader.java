@@ -17,9 +17,12 @@ public class FileReader {
 
 	public void readNodes() throws FileNotFoundException, IOException{
 		
+		DrawSolutions ds = new DrawSolutions();
+		String path = ds.getPath();
+		
 		 // Number of nodes
 		String line;
-		FileInputStream fstream = new FileInputStream("/Users/erensezener/java_workspace/Kohonen-TSP/mynodes.txt");
+		FileInputStream fstream = new FileInputStream(path);
 		DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		

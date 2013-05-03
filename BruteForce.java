@@ -8,10 +8,6 @@ public class BruteForce {
 	int[] shortestPath;
 	int numNodes;
 
-	public int[] getShortestPath() {
-		return shortestPath;
-	}
-
 	public static void main(String args[]) throws FileNotFoundException, IOException{
 		BruteForce bf = new BruteForce();
 		System.out.println("Brute force solution is "+ bf.findSolution());
@@ -23,14 +19,13 @@ public class BruteForce {
 		int numNodes = fileReader.getNumberOfNodes();
 		if(numNodes<=14){
 			shortestPath = new int[numNodes];
-			//			System.out.println(numNodes);
-			//			ArrayList<Node> nodes = fileReader.getNodes();
-			//			for(int i=0; i<numNodes-1; i++){
-			//				System.out.println(calculateDistance(nodes.get(i),nodes.get(i+1)));
-			//			}
-			//			System.out.println(calculateDistance(nodes.get(numNodes-1),nodes.get(0)));
-
-			//		System.out.println(calculateMinDistance());
+			System.out.println(numNodes);
+			ArrayList<Node> nodes = fileReader.getNodes();
+			for(int i=0; i<numNodes-1; i++){
+				System.out.println(calculateDistance(nodes.get(i),nodes.get(i+1)));
+			}
+			System.out.println(calculateDistance(nodes.get(numNodes-1),nodes.get(0)));
+			System.out.println(calculateMinDistance());
 			return calculateMinDistance();
 		}
 		else{
@@ -40,58 +35,64 @@ public class BruteForce {
 		}
 	}
 
-	public double calculateDistance (Node n1, Node n2){
-		int xDiff = n1.getX() - n2.getX();
-		int yDiff = n1.getY() - n1.getY();
-		double distance = Math.sqrt(xDiff*xDiff + yDiff*yDiff);
-		return distance;
-	}
 
 	public int calculateMinDistance() throws FileNotFoundException, IOException{
 		int sum = 0;
 		int min = 10000000;
-		int max = 0;
-		int[] temp = null;
+		int[] currentPermutation= null;
 		FileReader fileReader = new FileReader();
 		fileReader.readNodes();
-//		System.out.println("Number of nodes is: "+ fileReader.getNumberOfNodes());
+		//		System.out.println("Number of nodes is: "+ fileReader.getNumberOfNodes());
 		numNodes = fileReader.getNumberOfNodes();
 		PermutationGenerator pg = new PermutationGenerator(fileReader.getNumberOfNodes(),1);
 		ArrayList<Node> nodes = fileReader.getNodes();
 		while (pg.hasMore()) {
-			temp =  pg.getNext();
+			currentPermutation =  pg.getNext();
 
-			//			Printing the array
-//			for(int i=0; i<temp.length; i++)
-//				System.out.print(temp[i] +" ");
+			//						Printing the array
+//			for(int i=0; i<currentPermutation.length; i++)
+//				System.out.print(currentPermutation[i] +" ");
+//			System.out.println();
 
-//			System.out.println("Permutation");
+			//			System.out.println("Permutation");
 
-			for (int i = 0; i < temp.length-1; i++) {
-				sum += calculateDistance(nodes.get(temp[i]-1), nodes.get(temp[i+1]-1));
-				//				System.out.println("Calculating the distance between: "+ i+ " and "
-				//						+ (i+1)); 
+			for (int i = 0; i < currentPermutation.length-1; i++) {
+				double add = calculateDistance(nodes.get(currentPermutation[i]-1), nodes.get(currentPermutation[i+1]-1));
+				sum += add;
+				//				System.out.println("Distance between: "+ currentPermutation[i]+ " and "+ currentPermutation[i+1]+" "+ add); 
 			}
 
-			sum += calculateDistance(nodes.get(0), nodes.get(temp.length-1));
-//			System.out.println("Sum is "+sum);
+			sum += calculateDistance(nodes.get(currentPermutation[0]-1), nodes.get(currentPermutation[currentPermutation.length-1]-1));
+//						System.out.println("Sum is "+sum);
 			if(sum<min){
 				min = sum;
 				System.out.println("Min is "+min);
 				//				System.out.println("Number of nodes is "+ numNodes);
 				for(int i=0; i<numNodes; i++){
-					shortestPath[i] = temp[i];
-					System.out.print(temp[i]+ " ");
+					shortestPath[i] = currentPermutation[i];
+					System.out.print(currentPermutation[i]+ " ");
 					System.out.println();
 				}
-
-			} else if(sum>max){
-				max = sum;
-				//				System.out.println("Max is "+max);
-			}
+			} 
 			sum = 0;
 		}//end while
 		return min;
+	}
+
+	public int[] getShortestPath() {
+		return shortestPath;
+	}
+
+	public double calculateDistance (Node n1, Node n2){
+//				System.out.println( n1.getId() +" " + n1.getX() + " " +n1.getY());
+//				System.out.println(n2.getId() + " "+ n2.getX() + " " +n2.getY());
+		double xDiff = n1.getX() - n2.getX();
+		double yDiff = n1.getY() - n2.getY();
+		double sqDistance = xDiff*xDiff + yDiff*yDiff;
+		//		System.out.println("Square of distance is "+sqDistance);
+		double distance = Math.sqrt(sqDistance);
+//				System.out.println(distance);
+		return distance;
 	}
 
 

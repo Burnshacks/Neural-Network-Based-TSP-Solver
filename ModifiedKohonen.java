@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ModifiedKohonen{
-	
+
 	private int numNodes = 0;
 	private int numNeurons = numNodes * 2;
 	private static final double DECAY = 0.995;
@@ -48,28 +48,44 @@ public class ModifiedKohonen{
 			weight[i][1] = 1000*Math.random();
 		}
 
-		calculateH(sigma);
+//		calculateH(sigma);
 
 		return;
 	}
 
 	// Calculates the distance neurons
-	private void calculateH(double theta){
-		for(int i = 0; i < numNeurons; i++)
-		{
-			h[i][i] = 1.0;
-			for(int j = i + 1; j < numNeurons; j++)
-			{
-				h[i][j] = Math.exp(-1.0 * (getDistance(i, j) * getDistance(i, j)) / (2 * Math.pow(theta, 2)));
-				h[j][i] = h[i][j];
-			}
+//	private void calculateH(double theta){
+//		for(int i = 0; i < numNeurons; i++)
+//		{
+//			h[i][i] = 1.0;
+//			for(int j = i + 1; j < numNeurons; j++)
+//			{
+//				h[i][j] = Phi(i, j, theta);
+//				h[j][i] = h[i][j];
+//
+//			}
+//		}
+//	}
+
+	private double normalizedDistance(int i, int j, double theta){
+		double numerator = Phi(i, j, theta);
+		double denumerator = 0;
+
+		for(int p = 0; p < numNeurons; p++){
+			denumerator = Phi(i, p, theta);
 		}
+
+		return numerator / denumerator;
 	}
 
-	private double getDistance(int index, int index2)
-	{
-		double dx = neuronXY[index][0] - neuronXY[index2][0];
-		double dy = neuronXY[index][1] - neuronXY[index2][1];
+	private double Phi(int x, int y, double theta){
+		double result = Math.exp(-1.0 * (getDistance(x, y) * getDistance(x, y)) / (2 * Math.pow(theta, 2)));
+		return result;
+	}
+
+	private double getDistance(int index, int index2){
+		double dx = node[index][0] - neuronXY[index2][0];
+		double dy = node[index][1] - neuronXY[index2][1];
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 
@@ -88,46 +104,49 @@ public class ModifiedKohonen{
 	}
 
 	public void algorithm(){
-		
-		int index = 0;
-		int indexBMU = 0;
-		double patternX = 0.0;
-		double patternY = 0.0;
+
+//		int index = 0;
+//		int indexBMU = 0;
+//		double patternX = 0.0;
+//		double patternY = 0.0;
 
 		// Pick a Random Node
-		index = (int)(Math.random() * numNodes);
-		patternX = node[index][0];
-		patternY = node[index][1];
+//		index = (int)(Math.random() * numNodes);
+//		patternX = node[index][0];
+//		patternY = node[index][1];
 
 		// Find index of the BMU
-		indexBMU = findBMU(patternX, patternY);
+//		indexBMU = findBMU(patternX, patternY);
 
 		//Update the all neurons with respect to their distances to BMU
-		for(int i = 0; i < numNeurons; i++){
+		for(int j = 0; j < numNeurons; j++){
 			double higherWeight;
 			double lowerWeight;
-			
-			if(i <= numNeurons -2)
-				higherWeight = weight[i+1][0];
+
+			if(j <= numNeurons -2)
+				higherWeight = weight[j+1][0];
 			else
 				higherWeight = weight[0][0];
-			
-			if(i >= 1)
-				lowerWeight = weight[i-1][0];
+
+			if(j >= 1)
+				lowerWeight = weight[j-1][0];
 			else
 				lowerWeight = weight[numNeurons-1][0];
-			
-			
-			weight[i][0] += (alpha * h[i][indexBMU] * (patternX - weight[i][0])) + 
-					k * (higherWeight - 2 * weight[i][0] + lowerWeight);
-			weight[i][1] += (alpha * h[i][indexBMU] * (patternY - weight[i][1])) +		
-					k * (higherWeight - 2 * weight[i][1] + lowerWeight);
-		}
 
+			for(int i = 0; i < numNodes; i++){
+				
+				weight[i][0] += (alpha * normalizedDistance(i, j, sigma) * (node[i][0] - weight[i][0])) + 
+						k * (higherWeight - 2 * weight[i][0] + lowerWeight);
+				
+				weight[i][1] += (alpha * normalizedDistance(i, j, sigma) * (node[i][1] - weight[i][1])) +		
+						k * (higherWeight - 2 * weight[i][1] + lowerWeight);
+			}
+
+		}
 		//Updates alpha and sigma (Monoton decay)
 		updateParameters();
-		
-		calculateH(sigma);
+
+//		calculateH(sigma);
 
 
 	}
@@ -147,7 +166,6 @@ public class ModifiedKohonen{
 		ModifiedKohonen en = new ModifiedKohonen();
 		en.findKohonenSolution();
 	}
-
 
 
 	public void findKohonenSolution() throws FileNotFoundException, IOException{
