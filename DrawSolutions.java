@@ -74,19 +74,15 @@ public class DrawSolutions extends GraphicsProgram {
 		int tempy2;
 		int totalDistance = 0;
 		KohonenNetwork en = new KohonenNetwork();
-//		ModifiedKohonen en = new ModifiedKohonen();
 		
 		en.setup();
 		for(int j=0; j<EPOCHS; j++){
 			totalDistance=0;
 			en.updateWeights();
 			pause(20-j/(EPOCHS/20));
-			//		en.findKohonenSolution();
 			double[][] weights = en.getWeight();
-//			System.out.println(weights.length);
 
 			for(int i=0; i<weights.length-1;i++){
-//				System.out.println(weights[i][0]);
 				tempx1 = (int) weights[i][0];
 				tempy1 = (int) weights[i][1];
 				tempx2 = (int) weights[i+1][0];
